@@ -1,0 +1,357 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+/* ─── Reset & Base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --col-hd-yellow:   #f5c842;
+  --col-hd-red:      #d63226;
+  --col-hd-blue:     #0af;
+  --col-hd-dark:     #080c12;
+  --col-hd-panel:    rgba(8, 20, 40, 0.85);
+  --col-hd-border:   rgba(0, 170, 255, 0.35);
+  --font-hud:        'Orbitron', 'Share Tech Mono', monospace;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: var(--font-hud);
+  color: #e8f4ff;
+  cursor: crosshair;
+}
+
+/* ─── Intro Sequence ───────────────────────────────────────────────────────── */
+.intro-root {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #000008;
+  display: flex;
+  align-items: stretch;
+  transition: opacity 1.2s ease;
+  cursor: pointer;
+}
+
+.intro-root.intro-fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro-canvas {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Dark left-side gradient to make text more readable */
+.intro-root::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,8,0.0) 40%,
+    rgba(0,0,8,0.75) 65%,
+    rgba(0,0,8,0.92) 100%
+  );
+  pointer-events: none;
+}
+
+/* CMD terminal block — top right */
+.intro-terminal {
+  position: absolute;
+  top: 10vh;
+  right: 5vw;
+  width: min(420px, 42vw);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 2;
+}
+
+/* Individual typewriter lines */
+.intro-line {
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: clamp(0.6rem, 1.1vw, 0.9rem);
+  letter-spacing: 0.05em;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.intro-line.dim    { color: rgba(0, 200, 255, 0.5); }
+.intro-line.hero   { color: #f5c842; font-size: clamp(0.9rem, 1.8vw, 1.4rem); letter-spacing: 0.18em; font-family: 'Orbitron', monospace; font-weight: 900; text-shadow: 0 0 20px rgba(245,200,66,0.6); }
+.intro-line.name   { color: #e8f4ff; font-size: clamp(0.75rem, 1.3vw, 1.05rem); letter-spacing: 0.14em; font-family: 'Orbitron', monospace; font-weight: 400; }
+.intro-line.flavor { color: rgba(200, 220, 255, 0.65); font-style: italic; }
+
+.intro-line-spacer { height: 0.8em; }
+
+/* Blinking cursor */
+.intro-cursor {
+  display: inline-block;
+  animation: blinkCursor 0.7s step-end infinite;
+  color: rgba(0, 200, 255, 0.9);
+}
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Skip hint — bottom centre */
+.intro-skip {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: rgba(0, 180, 255, 0.45);
+  text-transform: uppercase;
+  animation: skipPulse 2.5s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes skipPulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.9; }
+}
+
+/* Status bar — bottom left */
+.intro-status {
+  position: absolute;
+  bottom: 16px;
+  left: 24px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.2em;
+  color: rgba(0, 200, 100, 0.5);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+}
+
+.intro-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00ff80;
+  box-shadow: 0 0 8px rgba(0, 255, 128, 0.8);
+  animation: statusBlink 1.2s ease-in-out infinite;
+}
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+
+
+/* ─── HUD chrome ───────────────────────────────────────────────────────────── */
+.hud-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Corner frames */
+.hud-corner {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: var(--col-hd-blue);
+  border-style: solid;
+  opacity: 0.6;
+}
+.hud-corner.tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; }
+.hud-corner.tr { top: 16px; right: 16px; border-width: 2px 2px 0 0; }
+.hud-corner.bl { bottom: 16px; left: 16px; border-width: 0 0 2px 2px; }
+.hud-corner.br { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; }
+
+/* Location banner */
+.hud-location {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--col-hd-blue);
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(0, 170, 255, 0.6);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.hud-divider {
+  display: inline-block;
+  margin: 0 0.6em;
+  opacity: 0.4;
+}
+
+/* Crosshair */
+.hud-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 18px;
+  opacity: 0.5;
+}
+.hud-crosshair::before,
+.hud-crosshair::after {
+  content: '';
+  position: absolute;
+  background: var(--col-hd-blue);
+  border-radius: 1px;
+}
+.hud-crosshair::before {
+  width: 18px; height: 1px;
+  top: 50%; left: 0;
+  transform: translateY(-50%);
+}
+.hud-crosshair::after {
+  width: 1px; height: 18px;
+  left: 50%; top: 0;
+  transform: translateX(-50%);
+}
+
+/* Bottom status bar */
+.hud-statusbar {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: rgba(0, 170, 255, 0.45);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* ─── promptPulse keyframe ─────────────────────────────────────────────────── */
+@keyframes promptPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(245, 200, 66, 0.3); }
+  50%       { box-shadow: 0 0 20px rgba(245, 200, 66, 0.7); }
+}
+
+/* ─── Node name transitions ────────────────────────────────────────────────── */
+.hud-location {
+  animation: locFadeIn 0.5s ease forwards;
+}
+
+@keyframes locFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ─── Vignette ─────────────────────────────────────────────────────────────── */
+.hud-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(0, 5, 15, 0.7) 100%
+  );
+  pointer-events: none;
+}
+
+/* ─── Scan-line overlay ────────────────────────────────────────────────────── */
+.hud-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.06) 2px,
+    rgba(0, 0, 0, 0.06) 4px
+  );
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* ─── Interact prompt (DOM overlay) ───────────────────────────────────────── */
+.interact-prompt {
+  position: fixed;
+  bottom: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  font-family: var(--font-hud);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  color: var(--col-hd-yellow);
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(245, 200, 66, 0.8);
+  background: rgba(8, 20, 40, 0.72);
+  border: 1px solid rgba(245, 200, 66, 0.45);
+  border-radius: 3px;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: opacity 0.25s ease, background 0.18s;
+  white-space: nowrap;
+  animation: promptPulse 2s ease-in-out infinite;
+  user-select: none;
+}
+
+.interact-prompt:hover {
+  background: rgba(245, 200, 66, 0.15);
+}
+
+/* ─── DOM Navigation Overlay ───────────────────────────────────────────────── */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Each arrow button is absolutely positioned relative to viewport centre */
+.nav-arrow-dom {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  pointer-events: all;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: filter 0.18s ease;
+  filter: drop-shadow(0 0 10px rgba(0,170,255,0.55));
+  user-select: none;
+  /* JS positions each button via inline style */
+}
+
+.nav-arrow-dom:hover {
+  filter: drop-shadow(0 0 22px rgba(0,200,255,0.98));
+}
+
+.nav-arrow-dom:hover svg circle {
+  fill: rgba(0,200,255,0.25);
+}
+
+.nav-arrow-dom-label {
+  font-family: var(--font-hud);
+  font-size: 0.5rem;
+  letter-spacing: 0.16em;
+  color: rgba(0, 210, 255, 0.9);
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(0,180,255,0.7);
+  white-space: nowrap;
+  pointer-events: none;
+}
