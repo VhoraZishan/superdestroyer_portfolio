@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
-import { NODES } from '../data/nodes';
+import { NODES, type NodeId } from '../data/nodes';
 import { useNavigationStore } from '../store/navigationStore';
+import { useTerminalStore } from '../store/terminalStore';
 import { useCameraNavigation } from '../hooks/useCameraNavigation';
 import { useFreeLook } from '../hooks/useFreeLook';
 
@@ -11,7 +12,7 @@ import { useFreeLook } from '../hooks/useFreeLook';
  * (outside the canvas) so they are always on-screen regardless of camera facing.
  */
 interface SceneControllerProps {
-  onInteract: (nodeId: string) => void;
+  onInteract: (nodeId: NodeId) => void;
 }
 
 export function SceneController({ onInteract }: SceneControllerProps) {
@@ -25,6 +26,9 @@ export function SceneController({ onInteract }: SceneControllerProps) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'e' || e.key === 'E') {
+        // Ignore if terminal is already open
+        if (useTerminalStore.getState().isOpen) return;
+
         const node = NODES[currentNode];
         if (node.interactive) onInteract(currentNode);
       }
