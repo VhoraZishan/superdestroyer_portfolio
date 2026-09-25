@@ -52,6 +52,14 @@ const CDN = {
   consoleStation:   'https://cdn.3dassets.dev/assets/12561/v1/model.glb',
   railing2m:        'https://cdn.3dassets.dev/assets/12593/v1/model.glb',
   captainChair:     'https://cdn.3dassets.dev/assets/12569/v1/model.glb',
+  serverRack:       'https://cdn.3dassets.dev/assets/12579/v1/model.glb',
+  cargoContainer:   'https://cdn.3dassets.dev/assets/12590/v1/model.glb',
+  crateTall:        'https://cdn.3dassets.dev/assets/12589/v1/model.glb',
+  storageCrate:     'https://cdn.3dassets.dev/assets/12585/v1/model.glb',
+  supplyDrum:       'https://cdn.3dassets.dev/assets/12591/v1/model.glb',
+  wallScreen:       'https://cdn.3dassets.dev/assets/12570/v1/model.glb',
+  crewSeat:         'https://cdn.3dassets.dev/assets/12571/v1/model.glb',
+  lockerBank:       'https://cdn.3dassets.dev/assets/12581/v1/model.glb',
 };
 
 export const ASSET_URLS = CDN;
@@ -68,13 +76,11 @@ export const NODES: Record<NodeId, ShipNode> = {
   bridge: {
     id: 'bridge',
     gridPos: [0, 0],
-    models: [CDN.commandPlatform, CDN.holoTable, CDN.helmConsole],
+    models: [CDN.commandPlatform, CDN.holoTable],
     connectsTo: ['corridor-1', 'bridge-viewport'],
     interactive: true,
     interactiveLabel: '[E] ACCESS PERSONNEL FILE',
-    // Prompt at central holographic war table
     promptAnchor: [0, 0.2, -2.0],
-    // Player stands behind the central command console, facing forward towards the viewport
     cameraPos: [0, EYE_HEIGHT, 0],
     cameraLookAt: [0, EYE_HEIGHT, -6],
   },
@@ -87,7 +93,6 @@ export const NODES: Record<NodeId, ShipNode> = {
     interactive: true,
     interactiveLabel: '[E] OBSERVE SUPER EARTH',
     promptAnchor: [0, 0.4, -5.8],
-    // Player stands right at the floor-to-ceiling panoramic glass looking out at orbit
     cameraPos: [0, EYE_HEIGHT, -5.2],
     cameraLookAt: [0, EYE_HEIGHT - 0.2, -14],
   },
@@ -100,7 +105,6 @@ export const NODES: Record<NodeId, ShipNode> = {
     interactive: true,
     interactiveLabel: '[E] ACCESS LOADOUT',
     promptAnchor: [1.8, 0.4, 0],
-    // Positioned in the center of the wide armory bay
     cameraPos: [0, EYE_HEIGHT, 4.8],
     cameraLookAt: [0, EYE_HEIGHT, 9.0],
   },
@@ -144,40 +148,39 @@ export const NODES: Record<NodeId, ShipNode> = {
   'cargo-bay': {
     id: 'cargo-bay',
     gridPos: [0, 3],
-    models: [CDN.cargoBayShell],
+    models: [CDN.cargoBayShell, CDN.cargoContainer, CDN.crateTall],
     connectsTo: ['junction'],
     interactive: false,
     interactiveLabel: '',
     promptAnchor: [0, 1.2, 0],
-    // Snapped flush to junction North port (junction z=9, port z=11, room center z=15)
-    cameraPos: [0, EYE_HEIGHT, 15.0],
-    cameraLookAt: [0, EYE_HEIGHT, 20.0],
+    cameraPos: [0, EYE_HEIGHT, 14.5],
+    cameraLookAt: [0, EYE_HEIGHT, 18.0],
   },
 
   'war-room': {
     id: 'war-room',
     gridPos: [1, 2],
-    models: [CDN.roomShell6x6, CDN.holoTable],
+    models: [CDN.roomShell6x6, CDN.holoTable, CDN.wallScreen],
     connectsTo: ['junction'],
     interactive: true,
     interactiveLabel: '[E] ACCESS CAMPAIGN MAP',
     promptAnchor: [0, 0.6, 0],
-    // Snapped flush to junction East port (junction x=0, port x=2, room center x=5)
-    cameraPos: [5.0, EYE_HEIGHT, 9.0],
-    cameraLookAt: [8.0, EYE_HEIGHT, 9.0],
+    // Positioned beside the table so player looks at the holographic map from the side
+    cameraPos: [3.6, EYE_HEIGHT, 8.2],
+    cameraLookAt: [5.0, EYE_HEIGHT - 0.2, 9.0],
   },
 
   archive: {
     id: 'archive',
     gridPos: [-1, 2],
-    models: [CDN.roomShell8x8],
+    models: [CDN.roomShell8x8, CDN.serverRack, CDN.wallScreen],
     connectsTo: ['junction'],
     interactive: true,
     interactiveLabel: '[E] ACCESS MISSION RECORDS',
     promptAnchor: [0, 0.6, 0],
-    // Snapped flush to junction West port (junction x=0, port x=-2, room center x=-6)
-    cameraPos: [-6.0, EYE_HEIGHT, 9.0],
-    cameraLookAt: [-9.0, EYE_HEIGHT, 9.0],
+    // Positioned inside the intelligence vault beside data terminals
+    cameraPos: [-4.6, EYE_HEIGHT, 8.2],
+    cameraLookAt: [-6.0, EYE_HEIGHT - 0.2, 9.0],
   },
 
   'sealed-door': {

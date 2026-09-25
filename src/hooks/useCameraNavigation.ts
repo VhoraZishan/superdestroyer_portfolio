@@ -36,6 +36,7 @@ export function useCameraNavigation() {
       const endPos = new THREE.Vector3(...toNode.cameraPos);
       const endLookAt = new THREE.Vector3(...toNode.cameraLookAt);
 
+      store.setTargetNode(targetId);
       setTweening(true);
 
       // Kill any in-flight tween
