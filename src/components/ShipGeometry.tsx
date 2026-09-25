@@ -50,15 +50,15 @@ function BulkheadDoorCap({
     <group position={position} rotation={rotation ?? [0, 0, 0]}>
       {/* Heavy airtight bulkhead door frame */}
       <Model url={ASSET_URLS.bulkheadDoor} position={[0, 0, 0]} />
-      {/* Red pressurized seal status indicator bar on lintel */}
+      {/* Pressurized seal status indicator bar on lintel */}
       <mesh position={[0, 2.18, 0.08]}>
         <boxGeometry args={[0.7, 0.05, 0.04]} />
-        <meshBasicMaterial color="#ef4444" />
+        <meshStandardMaterial color="#cbd5e1" />
       </mesh>
       {/* Heavy blast seal backing panel to completely prevent any light or void leak */}
       <mesh position={[0, 1.3, 0]}>
         <boxGeometry args={[2.0, 2.7, 0.08]} />
-        <meshStandardMaterial color="#0f172a" roughness={0.7} metalness={0.8} />
+        <meshStandardMaterial color="#e2e8f0" roughness={0.6} metalness={0.1} />
       </mesh>
     </group>
   );
@@ -171,43 +171,27 @@ function SuperEarthVista() {
 function GrandBridge({ visibleNodes }: { visibleNodes: NodeId[] }) {
   return (
     <group position={[0, 0, 0]}>
-      {/* ── Helldivers 2 Command Deck Floor Structure ── */}
-      {/* Main military deck plate: 12m wide x 9m deep */}
+      {/* ── Default Clean White Deck Structure ── */}
+      {/* Main deck plate: 12m wide x 9m deep */}
       <mesh position={[0, 0, -2.5]} receiveShadow>
         <boxGeometry args={[12, 0.2, 9]} />
-        <meshStandardMaterial color="#1e293b" roughness={0.4} metalness={0.7} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
 
       {/* Raised side walkways (left & right) */}
       <mesh position={[-4.8, 0.2, -2.5]}>
         <boxGeometry args={[2.4, 0.2, 9]} />
-        <meshStandardMaterial color="#2d3748" roughness={0.35} metalness={0.7} />
+        <meshStandardMaterial color="#e2e8f0" roughness={0.5} metalness={0.1} />
       </mesh>
       <mesh position={[4.8, 0.2, -2.5]}>
         <boxGeometry args={[2.4, 0.2, 9]} />
-        <meshStandardMaterial color="#2d3748" roughness={0.35} metalness={0.7} />
-      </mesh>
-
-      {/* Recessed cyan neon floor lighting strips */}
-      <mesh position={[-3.5, 0.12, -2.5]}>
-        <boxGeometry args={[0.08, 0.05, 8.8]} />
-        <meshBasicMaterial color="#00e5ff" />
-      </mesh>
-      <mesh position={[3.5, 0.12, -2.5]}>
-        <boxGeometry args={[0.08, 0.05, 8.8]} />
-        <meshBasicMaterial color="#00e5ff" />
-      </mesh>
-
-      {/* Observation deck yellow hazard stripe near window */}
-      <mesh position={[0, 0.12, -5.7]}>
-        <boxGeometry args={[11.6, 0.02, 0.14]} />
-        <meshBasicMaterial color="#facc15" />
+        <meshStandardMaterial color="#e2e8f0" roughness={0.5} metalness={0.1} />
       </mesh>
 
       {/* ── Industrial Ceiling & Overhead Floodlights ── */}
       <mesh position={[0, 3.7, -2.5]}>
         <boxGeometry args={[12, 0.2, 9]} />
-        <meshStandardMaterial color="#0f172a" roughness={0.6} metalness={0.5} />
+        <meshStandardMaterial color="#f8fafc" roughness={0.5} metalness={0.1} />
       </mesh>
       <mesh position={[0, 3.58, -2.5]}>
         <boxGeometry args={[0.4, 0.06, 7]} />
@@ -215,35 +199,35 @@ function GrandBridge({ visibleNodes }: { visibleNodes: NodeId[] }) {
       </mesh>
       <mesh position={[-3.5, 3.58, -2.5]}>
         <boxGeometry args={[0.25, 0.06, 7]} />
-        <meshBasicMaterial color="#e0f2fe" />
+        <meshBasicMaterial color="#ffffff" />
       </mesh>
       <mesh position={[3.5, 3.58, -2.5]}>
         <boxGeometry args={[0.25, 0.06, 7]} />
-        <meshBasicMaterial color="#e0f2fe" />
+        <meshBasicMaterial color="#ffffff" />
       </mesh>
 
       {/* ── Side Walls (Left & Right) ── */}
       <mesh position={[-6.0, 1.85, -2.5]}>
         <boxGeometry args={[0.2, 3.5, 9]} />
-        <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.65} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
       <mesh position={[6.0, 1.85, -2.5]}>
         <boxGeometry args={[0.2, 3.5, 9]} />
-        <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.65} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
 
       {/* ── Rear Bulkhead Wall (leads to Armory corridor at +Z) ── */}
       <mesh position={[-3.9, 1.85, 2.0]}>
         <boxGeometry args={[4.2, 3.5, 0.2]} />
-        <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.65} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
       <mesh position={[3.9, 1.85, 2.0]}>
         <boxGeometry args={[4.2, 3.5, 0.2]} />
-        <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.65} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
       <mesh position={[0, 3.1, 2.0]}>
         <boxGeometry args={[3.6, 1.0, 0.2]} />
-        <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.65} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
 
       {/* Sealed Blast Door at rear doorway (z=2.0) if Armory Bay is not loaded */}
@@ -251,16 +235,16 @@ function GrandBridge({ visibleNodes }: { visibleNodes: NodeId[] }) {
         <BulkheadDoorCap position={[0, 0, 2.0]} rotation={[0, Math.PI, 0]} />
       )}
 
-      {/* ── Helldivers Style Galactic War Command Center Table ── */}
+      {/* ── Center Command Table ── */}
       <group position={[0, 0.1, -1.8]}>
-        {/* Holographic Table Base Shell */}
+        {/* Table Base Shell */}
         <Model url={ASSET_URLS.holoTable} position={[0, 0, 0]} />
         {/* Outer illuminated projection ring */}
         <mesh rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[1.15, 1.22, 48]} />
           <meshBasicMaterial color="#00e5ff" side={THREE.DoubleSide} />
         </mesh>
-        {/* Secondary orbit ring */}
+        {/* Secondary ring */}
         <mesh rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[0.75, 0.8, 48]} />
           <meshBasicMaterial color="#f97316" side={THREE.DoubleSide} />
@@ -301,29 +285,29 @@ function GrandBridge({ visibleNodes }: { visibleNodes: NodeId[] }) {
       {[-5.8, -1.95, 1.95, 5.8].map((x, idx) => (
         <mesh key={idx} position={[x, 1.85, -6.8]}>
           <boxGeometry args={[0.22, 3.5, 0.25]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.3} metalness={0.9} />
+          <meshStandardMaterial color="#cbd5e1" roughness={0.4} metalness={0.1} />
         </mesh>
       ))}
       {/* Horizontal Upper Frame Header */}
       <mesh position={[0, 3.5, -6.8]}>
         <boxGeometry args={[11.8, 0.2, 0.3]} />
-        <meshStandardMaterial color="#1e293b" roughness={0.3} metalness={0.9} />
+        <meshStandardMaterial color="#cbd5e1" roughness={0.4} metalness={0.1} />
       </mesh>
       {/* Horizontal Lower Frame Sill */}
       <mesh position={[0, 0.15, -6.8]}>
         <boxGeometry args={[11.8, 0.2, 0.3]} />
-        <meshStandardMaterial color="#1e293b" roughness={0.3} metalness={0.9} />
+        <meshStandardMaterial color="#cbd5e1" roughness={0.4} metalness={0.1} />
       </mesh>
 
       {/* Crystal Clear Transparent Reinforced Viewport Glass Panes */}
       <mesh position={[0, 1.85, -6.8]}>
         <planeGeometry args={[11.6, 3.4]} />
         <meshStandardMaterial
-          color="#7dd3fc"
+          color="#ffffff"
           transparent
-          opacity={0.10}
+          opacity={0.06}
           roughness={0.05}
-          metalness={0.1}
+          metalness={0.0}
           depthWrite={false}
         />
       </mesh>
@@ -364,23 +348,13 @@ function ArmoryBayNode({ visibleNodes }: { visibleNodes: NodeId[] }) {
       {/* Deck Floor: 6m wide x 5m long (spanning z=2 to z=7) */}
       <mesh position={[0, 0, 0]} receiveShadow>
         <boxGeometry args={[6.0, 0.2, 5.0]} />
-        <meshStandardMaterial color="#222b3a" roughness={0.4} metalness={0.65} />
-      </mesh>
-
-      {/* Recessed Floor Cyan Guide Lights */}
-      <mesh position={[-1.8, 0.12, 0]}>
-        <boxGeometry args={[0.08, 0.04, 4.9]} />
-        <meshBasicMaterial color="#00e5ff" />
-      </mesh>
-      <mesh position={[1.8, 0.12, 0]}>
-        <boxGeometry args={[0.08, 0.04, 4.9]} />
-        <meshBasicMaterial color="#00e5ff" />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
 
       {/* Industrial Ceiling at y = 3.2 */}
       <mesh position={[0, 3.2, 0]}>
         <boxGeometry args={[6.0, 0.2, 5.0]} />
-        <meshStandardMaterial color="#1a2332" roughness={0.6} metalness={0.5} />
+        <meshStandardMaterial color="#f8fafc" roughness={0.5} metalness={0.1} />
       </mesh>
       {/* Overhead high-intensity lighting strip */}
       <mesh position={[0, 3.08, 0]}>
@@ -391,7 +365,7 @@ function ArmoryBayNode({ visibleNodes }: { visibleNodes: NodeId[] }) {
       {/* Left Wall with weapons storage lockers & crates */}
       <mesh position={[-3.0, 1.6, 0]}>
         <boxGeometry args={[0.2, 3.0, 5.0]} />
-        <meshStandardMaterial color="#2d3748" roughness={0.5} metalness={0.6} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
       <Model
         url={ASSET_URLS.lockerBank}
@@ -408,7 +382,7 @@ function ArmoryBayNode({ visibleNodes }: { visibleNodes: NodeId[] }) {
       {/* Right Wall with equipment lockers & tall crates */}
       <mesh position={[3.0, 1.6, 0]}>
         <boxGeometry args={[0.2, 3.0, 5.0]} />
-        <meshStandardMaterial color="#2d3748" roughness={0.5} metalness={0.6} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
       <Model
         url={ASSET_URLS.lockerBank}
@@ -425,29 +399,29 @@ function ArmoryBayNode({ visibleNodes }: { visibleNodes: NodeId[] }) {
       {/* South End Wall Bulkheads (z = -2.5, flanking 2m doorway) */}
       <mesh position={[-2.0, 1.6, -2.5]}>
         <boxGeometry args={[2.0, 3.0, 0.2]} />
-        <meshStandardMaterial color="#2d3748" roughness={0.5} metalness={0.6} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
       <mesh position={[2.0, 1.6, -2.5]}>
         <boxGeometry args={[2.0, 3.0, 0.2]} />
-        <meshStandardMaterial color="#2d3748" roughness={0.5} metalness={0.6} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
       <mesh position={[0, 2.7, -2.5]}>
         <boxGeometry args={[2.0, 0.8, 0.2]} />
-        <meshStandardMaterial color="#2d3748" roughness={0.5} metalness={0.6} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
 
       {/* North End Wall Bulkheads (z = 2.5, flanking 2m doorway) */}
       <mesh position={[-2.0, 1.6, 2.5]}>
         <boxGeometry args={[2.0, 3.0, 0.2]} />
-        <meshStandardMaterial color="#2d3748" roughness={0.5} metalness={0.6} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
       <mesh position={[2.0, 1.6, 2.5]}>
         <boxGeometry args={[2.0, 3.0, 0.2]} />
-        <meshStandardMaterial color="#2d3748" roughness={0.5} metalness={0.6} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
       <mesh position={[0, 2.7, 2.5]}>
         <boxGeometry args={[2.0, 0.8, 0.2]} />
-        <meshStandardMaterial color="#2d3748" roughness={0.5} metalness={0.6} />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.5} metalness={0.1} />
       </mesh>
 
       {/* Sealed Blast Door to Bridge (z = 2.0) if Bridge is unloaded */}
@@ -718,8 +692,8 @@ export function ShipGeometry() {
       ))}
 
       {/* ── Lighting ── */}
-      {/* Ambient: rich industrial fill */}
-      <ambientLight intensity={0.85} color="#94a3b8" />
+      {/* Ambient: balanced industrial fill */}
+      <ambientLight intensity={0.75} color="#cbd5e1" />
       {/* Overhead bridge floodlight */}
       <directionalLight position={[0, 8, -2]} intensity={2.2} color="#ffffff" />
       {/* Overhead warm deck lights */}
