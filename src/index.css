@@ -276,19 +276,9 @@ html, body, #root {
   pointer-events: none;
 }
 
-/* ─── Scan-line overlay ────────────────────────────────────────────────────── */
+/* ─── Scan-line overlay (disabled) ─────────────────────────────────────────── */
 .hud-scanlines {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.06) 2px,
-    rgba(0, 0, 0, 0.06) 4px
-  );
-  pointer-events: none;
-  mix-blend-mode: multiply;
+  display: none;
 }
 
 /* ─── Interact prompt (DOM overlay) ───────────────────────────────────────── */
@@ -393,12 +383,7 @@ html, body, #root {
 }
 
 .hd-terminal-scanlines {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.18;
-  z-index: 10;
-  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 2px);
+  display: none;
 }
 
 .hd-terminal-vignette {
@@ -414,7 +399,9 @@ html, body, #root {
   z-index: 20;
   width: 100%;
   max-width: 1160px;
-  max-height: 92vh;
+  height: 84vh;
+  min-height: 560px;
+  max-height: 840px;
   background: #080d12;
   border: 1px solid #334155;
   border-radius: 6px;
@@ -806,6 +793,61 @@ html, body, #root {
     padding: 7px 14px;
     background: rgba(8, 20, 40, 0.92);
     border-color: rgba(245, 200, 66, 0.7);
+  }
+
+  /* Full scrollable terminal modal on mobile */
+  .hd-terminal-overlay {
+    padding: 12px 8px;
+    align-items: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hd-terminal-window {
+    max-height: none;
+    height: auto;
+    overflow: visible;
+    margin: 0 auto;
+  }
+
+  .hd-terminal-body {
+    grid-template-columns: 1fr;
+    max-height: none;
+    height: auto;
+    overflow: visible;
+  }
+
+  .hd-terminal-sidebar {
+    height: auto;
+    max-height: 260px;
+    overflow-y: auto;
+    border-right: none;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .hd-terminal-detail {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    padding: 16px 12px;
+  }
+
+  .hd-terminal-header {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .hd-terminal-tabstrip {
+    padding: 8px 10px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .hd-terminal-footer {
+    padding: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
 

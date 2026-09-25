@@ -1,4 +1,7 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { useGLTF } from '@react-three/drei';
+import * as THREE from 'three';
 import { useTerminalStore } from '../store/terminalStore';
 import {
   PROFILE,
@@ -8,6 +11,130 @@ import {
   EDUCATION_RECORDS,
   CERTIFICATIONS,
 } from '../data/portfolio';
+
+// ─── 3D Holographic Super Destroyer Preview ─────────────────────────────────
+function HoloShipModel() {
+  const { scene } = useGLTF('/assets/Imperial.gltf');
+  const groupRef = useRef<THREE.Group>(null!);
+
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.45;
+    }
+  });
+
+  const clonedScene = useMemo(() => scene.clone(), [scene]);
+
+  return (
+    <group ref={groupRef} position={[0, -0.1, 0]} scale={0.155} rotation={[0.22, 0, 0]}>
+      <primitive object={clonedScene} />
+    </group>
+  );
+}
+
+function HoloShipViewer() {
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '240px',
+        background: 'radial-gradient(ellipse at center, #071524 0%, #03080e 100%)',
+        border: '1px solid rgba(0, 229, 255, 0.4)',
+        borderRadius: '4px',
+        overflow: 'hidden',
+        boxShadow: 'inset 0 0 30px rgba(0, 229, 255, 0.1)',
+      }}
+    >
+      <Canvas camera={{ position: [0, 2.2, 5.5], fov: 42 }} style={{ width: '100%', height: '100%' }}>
+        <ambientLight intensity={1.2} color="#38bdf8" />
+        <directionalLight position={[5, 10, 5]} intensity={2.5} color="#e0f2fe" />
+        <directionalLight position={[-5, -4, -5]} intensity={1.8} color="#00e5ff" />
+        <gridHelper args={[8, 16, '#00e5ff', '#0f2942']} position={[0, -0.85, 0]} />
+        <HoloShipModel />
+      </Canvas>
+
+      {/* Hologram scanline & tactical HUD badges */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '8px',
+          left: '10px',
+          fontSize: '9px',
+          fontFamily: "'Share Tech Mono', monospace",
+          color: '#00e5ff',
+          letterSpacing: '0.12em',
+          fontWeight: 'bold',
+          background: 'rgba(0,0,0,0.7)',
+          padding: '2px 6px',
+          borderRadius: '2px',
+          border: '1px solid rgba(0,229,255,0.4)',
+          pointerEvents: 'none',
+        }}
+      >
+        // HOLOGRAPHIC RECON // SES OCTAGON OF THE STARS
+      </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          top: '8px',
+          right: '10px',
+          fontSize: '9px',
+          fontFamily: "'Share Tech Mono', monospace",
+          color: '#22c55e',
+          letterSpacing: '0.1em',
+          fontWeight: 'bold',
+          background: 'rgba(0,0,0,0.7)',
+          padding: '2px 6px',
+          borderRadius: '2px',
+          border: '1px solid rgba(34,197,94,0.4)',
+          pointerEvents: 'none',
+        }}
+      >
+        HULL INTEGRITY: 100% [ONLINE]
+      </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '8px',
+          left: '10px',
+          fontSize: '9px',
+          fontFamily: "'Share Tech Mono', monospace",
+          color: '#ffd700',
+          letterSpacing: '0.1em',
+          background: 'rgba(0,0,0,0.7)',
+          padding: '2px 6px',
+          borderRadius: '2px',
+          border: '1px solid rgba(255,215,0,0.4)',
+          pointerEvents: 'none',
+        }}
+      >
+        WARP DRIVE: CHARGED // HELLPODS ARMED
+      </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '8px',
+          right: '10px',
+          fontSize: '9px',
+          fontFamily: "'Share Tech Mono', monospace",
+          color: '#94a3b8',
+          letterSpacing: '0.08em',
+          background: 'rgba(0,0,0,0.7)',
+          padding: '2px 6px',
+          borderRadius: '2px',
+          border: '1px solid #334155',
+          pointerEvents: 'none',
+        }}
+      >
+        SUPER DESTROYER CLASS-IV
+      </div>
+    </div>
+  );
+}
 
 export interface TerminalItem {
   id: string;
@@ -306,10 +433,14 @@ export function TerminalModal() {
   if (!isOpen || !activeRoom) return null;
 
   return (
-    <div className="hd-terminal-overlay">
-      {/* CRT Scanlines & Vignette */}
+    <div
+      className="hd-terminal-overlay"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) closeTerminal();
+      }}
+    >
+      {/* CRT Vignette */}
       <div className="hd-terminal-vignette" />
-      <div className="hd-terminal-scanlines" />
 
       {/* Main Terminal Frame */}
       <div className="hd-terminal-window">
@@ -323,8 +454,8 @@ export function TerminalModal() {
         <div className="hd-terminal-header">
           {/* Insignia & Title */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.5)', borderRadius: '4px' }}>
-              <span style={{ color: '#ffd700', fontSize: '14px', fontWeight: 'bold' }}>☠</span>
+            <div style={{ width: '32px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.5)', borderRadius: '4px' }}>
+              <span style={{ color: '#ffd700', fontSize: '10px', fontWeight: 900, letterSpacing: '0.05em' }}>SES</span>
             </div>
             <div>
               <div style={{ fontSize: '13px', letterSpacing: '0.18em', fontFamily: "'Orbitron', monospace", color: '#00e5ff', fontWeight: 'bold' }}>
@@ -345,7 +476,7 @@ export function TerminalModal() {
               <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>{PROFILE.telemetry.superCredits} [SC]</span>
             </div>
             <div className="hd-telemetry-badge">
-              <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>🏅 {PROFILE.telemetry.medals}</span>
+              <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>MEDALS: {PROFILE.telemetry.medals}</span>
             </div>
             <div className="hd-telemetry-badge">
               <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e' }} title="Common" />
@@ -396,7 +527,19 @@ export function TerminalModal() {
 
           <button
             onClick={closeTerminal}
-            style={{ background: 'none', border: '1px solid transparent', color: '#94a3b8', cursor: 'pointer', fontFamily: "'Share Tech Mono', monospace", fontSize: '11px', padding: '4px 8px' }}
+            style={{
+              background: 'rgba(239, 68, 68, 0.15)',
+              border: '1px solid rgba(239, 68, 68, 0.45)',
+              color: '#fca5a5',
+              cursor: 'pointer',
+              fontFamily: "'Share Tech Mono', monospace",
+              fontSize: '11px',
+              fontWeight: 'bold',
+              padding: '5px 12px',
+              borderRadius: '4px',
+              letterSpacing: '0.05em',
+              transition: 'all 0.15s ease',
+            }}
           >
             [ESC] DISCONNECT
           </button>
@@ -455,8 +598,10 @@ export function TerminalModal() {
           <div className="hd-terminal-detail">
             {activeItem ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {/* 16:9 Image Preview Box (If image exists) */}
-                {activeItem.imageUrl && (
+                {/* 3D Super Destroyer Holographic Viewer for Commander Overview, or image preview for others */}
+                {activeItem.id === 'overview' ? (
+                  <HoloShipViewer />
+                ) : activeItem.imageUrl ? (
                   <div className="hd-preview-box">
                     <img
                       src={activeItem.imageUrl}
@@ -472,7 +617,17 @@ export function TerminalModal() {
                       </span>
                     </div>
                   </div>
-                )}
+                ) : null}
+
+                {/* Ministry of Truth Tactical Lore Banner */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px', background: 'rgba(0, 229, 255, 0.05)', borderLeft: '3px solid #00e5ff', borderTop: '1px solid rgba(0, 229, 255, 0.2)', borderRight: '1px solid rgba(0, 229, 255, 0.1)', borderBottom: '1px solid rgba(0, 229, 255, 0.1)', borderRadius: '2px', fontFamily: "'Share Tech Mono', monospace", fontSize: '10px', color: '#94a3b8' }}>
+                  <span style={{ color: '#00e5ff', fontWeight: 'bold', letterSpacing: '0.08em' }}>
+                    // SUPER EARTH HIGH COMMAND DIRECTIVE 44-A //
+                  </span>
+                  <span style={{ color: '#ffd700', fontWeight: 'bold', letterSpacing: '0.06em' }}>
+                    OFFICIAL SERVICE RECORD VERIFIED
+                  </span>
+                </div>
 
                 {/* Header Information */}
                 <div>
@@ -492,7 +647,6 @@ export function TerminalModal() {
                   {/* Left Column: Operational Effect */}
                   <div className="hd-spec-box">
                     <div className="hd-spec-title" style={{ color: '#ffd700' }}>
-                      <span>⚡</span>
                       <span>OPERATIONAL HIGHLIGHTS</span>
                     </div>
                     <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '11px', fontFamily: "'Share Tech Mono', monospace", color: '#cbd5e1' }}>
@@ -508,7 +662,6 @@ export function TerminalModal() {
                   {/* Right Column: Affected Stratagems */}
                   <div className="hd-spec-box">
                     <div className="hd-spec-title" style={{ color: '#00e5ff' }}>
-                      <span>🛠</span>
                       <span>TECH ARMAMENT</span>
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
@@ -524,7 +677,6 @@ export function TerminalModal() {
                 {/* Action Buttons */}
                 <div style={{ paddingTop: '12px', borderTop: '1px solid #1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                   <div style={{ fontSize: '11px', fontFamily: "'Share Tech Mono', monospace", color: '#ffd700', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>🔒</span>
                     <span>AUTHORIZATION STATUS: {activeItem.status}</span>
                   </div>
 
@@ -565,11 +717,27 @@ export function TerminalModal() {
 
         {/* ── Bottom Footer Bar ── */}
         <div className="hd-terminal-footer">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <kbd style={{ padding: '2px 6px', background: '#1e293b', color: '#ffd700', borderRadius: '3px', fontSize: '10px', fontWeight: 'bold' }}>ESC</kbd>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+            <button
+              onClick={closeTerminal}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'rgba(255, 215, 0, 0.12)',
+                border: '1px solid rgba(255, 215, 0, 0.45)',
+                color: '#ffd700',
+                padding: '4px 10px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontFamily: "'Share Tech Mono', monospace",
+                fontSize: '11px',
+                fontWeight: 'bold',
+              }}
+            >
+              <kbd style={{ padding: '1px 5px', background: '#ffd700', color: '#000', borderRadius: '2px', fontSize: '9px', fontWeight: 900 }}>ESC</kbd>
               <span>CLOSE TERMINAL</span>
-            </span>
+            </button>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <kbd style={{ padding: '2px 6px', background: '#1e293b', color: '#cbd5e1', borderRadius: '3px', fontSize: '10px', fontWeight: 'bold' }}>↑ / ↓</kbd>
               <span>NAVIGATE LIST</span>

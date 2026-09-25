@@ -31,7 +31,7 @@ export const PROFILE: ProfileData = {
   name: 'Zishan Vhora',
   callsign: 'SES SUPER DESTROYER // COMMANDER',
   rank: 'BACKEND ARCHITECT // CADET LEVEL 8',
-  tagline: 'Curious mind. Clean backend. Cloudy ambitions.',
+  tagline: 'Curious mind. Clean backend. Cloudy ambitions. // HIGH COMMAND DIRECTIVE 44-A',
   avatarUrl: '/assets/images/profile_photo.jpeg',
   resumeUrl: '/assets/pdfs/ZishanIrfanVhoraResume.pdf',
   socials: {
@@ -40,10 +40,10 @@ export const PROFILE: ProfileData = {
     email: 'mailto:vhorazishan@gmail.com',
   },
   bioParagraphs: [
-    'Computer Engineering student with a core focus on backend development, distributed cloud platforms, and how complex software systems operate behind the scenes.',
-    'More inclined toward engineering resilient REST APIs, designing high-throughput databases, and architecting microservices rather than purely superficial UI work.',
-    'Hands-on experience building full-stack platforms, dynamic Role-Based Access Control (RBAC) security engines, hospital bed orchestration platforms, and self-hosted Linux server infrastructure.',
-    'Actively seeking engineering internships, backend contracts, and collaborative technical missions to solve real-world system challenges.',
+    'OFFICER DISPATCH: Computer Engineering specialist commissioned to engineer, deploy, and maintain mission-critical backend systems, distributed cloud platforms, and resilient database architectures.',
+    'TACTICAL DOCTRINE: More inclined toward engineering fault-tolerant REST APIs, high-throughput microservices, and airtight server pipelines than superficial cosmetic facades.',
+    'SYSTEM SPECIFICATIONS: Proven combat tour experience developing enterprise full-stack platforms, dynamic Role-Based Access Control (RBAC) security engines, hospital bed orchestration platforms, and self-hosted Linux server infrastructure.',
+    'WAR EFFORT REQUISITION: Cleared by Democracy Officers for immediate deployment in software engineering internships, backend architecture tours of duty, and full-scale technical collaboration.',
   ],
   telemetry: {
     requisitionSlips: '3,406 R',

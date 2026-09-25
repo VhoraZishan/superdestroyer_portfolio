@@ -191,7 +191,7 @@ function GrandBridge({ visibleNodes }: { visibleNodes: NodeId[] }) {
       {/* ── Industrial Ceiling & Overhead Floodlights ── */}
       <mesh position={[0, 3.7, -2.5]}>
         <boxGeometry args={[12, 0.2, 9]} />
-        <meshStandardMaterial color="#f8fafc" roughness={0.5} metalness={0.1} />
+        <meshStandardMaterial color="#1a2332" roughness={0.6} metalness={0.5} />
       </mesh>
       <mesh position={[0, 3.58, -2.5]}>
         <boxGeometry args={[0.4, 0.06, 7]} />
@@ -354,7 +354,7 @@ function ArmoryBayNode({ visibleNodes }: { visibleNodes: NodeId[] }) {
       {/* Industrial Ceiling at y = 3.2 */}
       <mesh position={[0, 3.2, 0]}>
         <boxGeometry args={[6.0, 0.2, 5.0]} />
-        <meshStandardMaterial color="#f8fafc" roughness={0.5} metalness={0.1} />
+        <meshStandardMaterial color="#1a2332" roughness={0.6} metalness={0.5} />
       </mesh>
       {/* Overhead high-intensity lighting strip */}
       <mesh position={[0, 3.08, 0]}>
@@ -482,6 +482,8 @@ function CargoBayNode({ visibleNodes }: { visibleNodes: NodeId[] }) {
       {!visibleNodes.includes('junction') && (
         <BulkheadDoorCap position={[0, 0, -4.0]} rotation={[0, 0, 0]} />
       )}
+
+
 
       {/* Heavy Shipping Containers */}
       <Model
