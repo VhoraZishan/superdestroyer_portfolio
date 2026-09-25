@@ -19,41 +19,103 @@ export function useFreeLook() {
 
   useEffect(() => {
     const canvas = gl.domElement;
+    canvas.style.touchAction = 'none';
 
-    const onPointerDown = (e: PointerEvent) => {
+    const lastPointerTime = { current: 0 };
+
+    const handleStart = (clientX: number, clientY: number) => {
       if (isTweening) return;
       isDragging.current = true;
-      lastPos.current = { x: e.clientX, y: e.clientY };
-      canvas.setPointerCapture(e.pointerId);
+      lastPos.current = { x: clientX, y: clientY };
     };
 
-    const onPointerMove = (e: PointerEvent) => {
+    const handleMove = (clientX: number, clientY: number, isTouchInput: boolean) => {
       if (!isDragging.current || isTweening) return;
-      const dx = e.clientX - lastPos.current.x;
-      const dy = e.clientY - lastPos.current.y;
-      lastPos.current = { x: e.clientX, y: e.clientY };
+      const dx = clientX - lastPos.current.x;
+      const dy = clientY - lastPos.current.y;
+      lastPos.current = { x: clientX, y: clientY };
 
-      const sensitivity = 0.003;
+      // Responsive sensitivity: Mobile touch needs higher responsiveness so a natural swipe turns the camera
+      const isMobile = window.innerWidth < 768 || isTouchInput;
+      const sensitivity = isMobile ? 0.0085 : 0.0035;
+
       euler.current.y -= dx * sensitivity;
       euler.current.x -= dy * sensitivity;
       euler.current.x = THREE.MathUtils.clamp(euler.current.x, -PITCH_LIMIT, PITCH_LIMIT);
       camera.quaternion.setFromEuler(euler.current);
     };
 
-    const onPointerUp = () => {
+    const handleEnd = () => {
       isDragging.current = false;
     };
 
+    // Pointer event handlers
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      handleStart(e.clientX, e.clientY);
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch {
+        // Fallback for browsers that don't support pointer capture on touch
+      }
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      lastPointerTime.current = performance.now();
+      handleMove(e.clientX, e.clientY, e.pointerType === 'touch');
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      handleEnd();
+      try {
+        if (canvas.hasPointerCapture(e.pointerId)) {
+          canvas.releasePointerCapture(e.pointerId);
+        }
+      } catch {
+        // Safe fallback
+      }
+    };
+
+    // Touch event fallback for mobile iOS Safari / Android WebViews
+    const onTouchStart = (e: TouchEvent) => {
+      if (isDragging.current || e.touches.length !== 1) return;
+      handleStart(e.touches[0].clientX, e.touches[0].clientY);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isDragging.current || isTweening || e.touches.length !== 1) return;
+      if (e.cancelable) e.preventDefault();
+      // Skip if pointer events already handled this touch frame
+      if (performance.now() - lastPointerTime.current < 25) return;
+      handleMove(e.touches[0].clientX, e.touches[0].clientY, true);
+    };
+
+    const onTouchEnd = () => {
+      handleEnd();
+    };
+
+    // Attach start on canvas
     canvas.addEventListener('pointerdown', onPointerDown);
-    canvas.addEventListener('pointermove', onPointerMove);
-    canvas.addEventListener('pointerup', onPointerUp);
-    canvas.addEventListener('pointercancel', onPointerUp);
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+
+    // Native touch listeners with passive: false to prevent browser gesture interception
+    canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('touchcancel', onTouchEnd);
 
     return () => {
       canvas.removeEventListener('pointerdown', onPointerDown);
-      canvas.removeEventListener('pointermove', onPointerMove);
-      canvas.removeEventListener('pointerup', onPointerUp);
-      canvas.removeEventListener('pointercancel', onPointerUp);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+
+      canvas.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
     };
   }, [camera, gl, isTweening]);
 

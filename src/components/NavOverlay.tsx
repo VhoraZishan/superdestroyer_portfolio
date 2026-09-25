@@ -21,17 +21,15 @@ interface ArrowButtonProps {
   targetId: NodeId;
   /** 0 = up, 90 = right, 180 = down, 270 = left (clockwise from up) */
   screenAngleDeg: number;
+  arrowDist: number;
   onClick: () => void;
 }
 
-// Distance from screen centre the arrow appears (px)
-const ARROW_DIST = 170;
-
-function ArrowButton({ targetId, screenAngleDeg, onClick }: ArrowButtonProps) {
+function ArrowButton({ targetId, screenAngleDeg, arrowDist, onClick }: ArrowButtonProps) {
   const rad = (screenAngleDeg - 90) * (Math.PI / 180); // convert to standard math angle
   // Offset from centre: x = cos(angle)*dist, y = sin(angle)*dist
-  const ox = Math.cos(rad) * ARROW_DIST;
-  const oy = Math.sin(rad) * ARROW_DIST;
+  const ox = Math.cos(rad) * arrowDist;
+  const oy = Math.sin(rad) * arrowDist;
 
   return (
     <button
@@ -83,7 +81,18 @@ export function NavOverlay({ cameraRef, onInteract }: NavOverlayProps) {
   const { currentNode, isTweening, navigateTo } = useNavigationStore();
   const [cameraYawDeg, setCameraYawDeg] = useState(0);
   const [promptVisible, setPromptVisible] = useState(false);
+  const [arrowDist, setArrowDist] = useState(170);
   const rafRef = useRef<number>(0);
+
+  // Responsive arrow distance
+  useEffect(() => {
+    const handleResize = () => {
+      setArrowDist(window.innerWidth < 640 ? 115 : 170);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Poll camera yaw every frame
   useEffect(() => {
@@ -142,6 +151,12 @@ export function NavOverlay({ cameraRef, onInteract }: NavOverlayProps) {
     if (navigateTo) navigateTo(id);
   }, [navigateTo]);
 
+  // Touch device prompt text adapter
+  const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  const promptLabel = isTouchDevice && currentNodeData.interactiveLabel
+    ? currentNodeData.interactiveLabel.replace(/\[E\]/, '[TAP]')
+    : currentNodeData.interactiveLabel;
+
   return (
     <div className="nav-overlay" aria-label="Navigation">
       {/* Nav arrows — always visible, facing correct screen direction */}
@@ -150,18 +165,19 @@ export function NavOverlay({ cameraRef, onInteract }: NavOverlayProps) {
           key={targetId}
           targetId={targetId}
           screenAngleDeg={screenAngleDeg}
+          arrowDist={arrowDist}
           onClick={() => handleNav(targetId)}
         />
       ))}
 
-      {/* [E] Interact prompt */}
+      {/* [E] / [TAP] Interact prompt */}
       {currentNodeData.interactive && !isTweening && (
         <div
           className="interact-prompt"
           style={{ opacity: promptVisible ? 1 : 0, pointerEvents: promptVisible ? 'auto' : 'none' }}
           onClick={() => onInteract(currentNode)}
         >
-          {currentNodeData.interactiveLabel}
+          {promptLabel}
         </div>
       )}
     </div>

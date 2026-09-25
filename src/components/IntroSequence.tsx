@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 
 // ─── Destroyer model — slow rotation, gentle drift ───────────────────────────
-// ─── Flagship Imperial Destroyer — Shifted left to balance terminal text ──────
+// ─── Flagship Imperial Destroyer — Shifted left on desktop, centered high on mobile ──────
 function DestroyerModel() {
   const { scene } = useGLTF('/assets/Imperial.gltf');
   const groupRef = useRef<THREE.Group>(null!);
   const t = useRef(0);
+  const { viewport } = useThree();
+  const isPortrait = viewport.aspect < 1.0;
 
   useEffect(() => {
     scene.traverse((child) => {
@@ -23,17 +25,22 @@ function DestroyerModel() {
     });
   }, [scene]);
 
+  const baseY = isPortrait ? 3.0 : 2.4;
+
   useFrame((_, delta) => {
     t.current += delta;
     if (groupRef.current) {
-      groupRef.current.position.y = 2.4 + Math.sin(t.current * 0.35) * 0.22;
+      groupRef.current.position.y = baseY + Math.sin(t.current * 0.35) * 0.22;
       groupRef.current.rotation.z = -0.12 + Math.sin(t.current * 0.25) * 0.02;
     }
   });
 
+  // Flagship position & scale: centered and raised on vertical mobile screens
+  const position: [number, number, number] = isPortrait ? [-1.2, 3.0, 2.2] : [-4.6, 2.4, 1.2];
+  const scale = isPortrait ? 0.46 : 0.70;
+
   return (
-    // Flagship positioned on the left third of the screen
-    <group ref={groupRef} position={[-4.6, 2.4, 1.2]} scale={0.70} rotation={[0.22, 0.65, -0.12]}>
+    <group ref={groupRef} position={position} scale={scale} rotation={[0.22, 0.65, -0.12]}>
       <primitive object={scene} position={[0, -0.34, -2.6]} />
     </group>
   );
@@ -86,6 +93,40 @@ function FleetEscort({
     <group ref={groupRef} position={position} scale={scale} rotation={rotation}>
       <primitive object={cloned} />
     </group>
+  );
+}
+
+function FleetFormation() {
+  const { viewport } = useThree();
+  const isPortrait = viewport.aspect < 1.0;
+
+  return (
+    <>
+      {/* Spitfire — trailing rear-high formation escort */}
+      <FleetEscort
+        url="/assets/Spitfire.gltf"
+        position={isPortrait ? [-3.2, 5.0, -3.0] : [-11.5, 7.8, -8.0]}
+        scale={isPortrait ? 0.34 : 0.52}
+        bobSpeed={0.28}
+        bobOffset={1.2}
+      />
+      {/* Striker — forward flank escort */}
+      <FleetEscort
+        url="/assets/Striker.gltf"
+        position={isPortrait ? [2.8, 4.2, -2.5] : [-8.5, 0.4, 5.0]}
+        scale={isPortrait ? 0.30 : 0.44}
+        bobSpeed={0.34}
+        bobOffset={2.5}
+      />
+      {/* Zenith — distant high-orbit heavy cruiser */}
+      <FleetEscort
+        url="/assets/Zenith.gltf"
+        position={isPortrait ? [-0.8, 6.5, -9.0] : [-16.0, 11.5, -16.0]}
+        scale={isPortrait ? 0.38 : 0.56}
+        bobSpeed={0.22}
+        bobOffset={0.7}
+      />
+    </>
   );
 }
 
@@ -365,30 +406,7 @@ export function IntroSequence({ onComplete }: IntroSequenceProps) {
         {/* Flagship + Vanity Fleet in orbital patrol formation */}
         <React.Suspense fallback={null}>
           <DestroyerModel />
-          {/* Spitfire — trailing rear-high formation escort */}
-          <FleetEscort
-            url="/assets/Spitfire.gltf"
-            position={[-11.5, 7.8, -8.0]}
-            scale={0.52}
-            bobSpeed={0.28}
-            bobOffset={1.2}
-          />
-          {/* Striker — forward flank escort */}
-          <FleetEscort
-            url="/assets/Striker.gltf"
-            position={[-8.5, 0.4, 5.0]}
-            scale={0.44}
-            bobSpeed={0.34}
-            bobOffset={2.5}
-          />
-          {/* Zenith — distant high-orbit heavy cruiser */}
-          <FleetEscort
-            url="/assets/Zenith.gltf"
-            position={[-16.0, 11.5, -16.0]}
-            scale={0.56}
-            bobSpeed={0.22}
-            bobOffset={0.7}
-          />
+          <FleetFormation />
         </React.Suspense>
       </Canvas>
 

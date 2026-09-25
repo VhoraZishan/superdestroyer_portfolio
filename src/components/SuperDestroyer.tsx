@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Preload } from '@react-three/drei';
+import { Preload, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { ShipGeometry } from './ShipGeometry';
 import { SceneController } from './SceneController';
@@ -32,14 +32,16 @@ export function SuperDestroyer({ onInteract }: SuperDestroyerProps) {
     <>
       <Canvas
         id="super-destroyer-canvas"
-        style={{ width: '100vw', height: '100vh', background: '#000' }}
-        camera={{ fov: 75, near: 0.1, far: 200 }}
+        style={{ width: '100vw', height: '100vh', background: '#000008' }}
+        camera={{ fov: 75, near: 0.1, far: 250 }}
         gl={{ antialias: true, alpha: false }}
         onCreated={({ camera }) => {
           // Store camera ref so NavOverlay can read it
           (cameraRef as React.MutableRefObject<THREE.Camera>).current = camera;
         }}
       >
+        <color attach="background" args={['#000008']} />
+        <Stars radius={160} depth={80} count={6000} factor={4} fade speed={0.25} />
         <ShipGeometry />
         <SceneController onInteract={handleInteract} />
         <Preload all />

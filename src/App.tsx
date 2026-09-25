@@ -51,7 +51,14 @@ function HUD() {
 
       {/* Status bar */}
       <div className="hud-statusbar">
-        {isTweening ? 'NAVIGATING...' : 'DRAG TO LOOK  •  CLICK ARROW TO MOVE  •  [E] TO INTERACT'}
+        {isTweening ? (
+          'NAVIGATING...'
+        ) : (
+          <>
+            <span className="desktop-hud-tip">DRAG TO LOOK  •  CLICK ARROW TO MOVE  •  [E] TO INTERACT</span>
+            <span className="mobile-hud-tip">SWIPE TO LOOK  •  TAP ARROW  •  TAP PROMPT</span>
+          </>
+        )}
       </div>
     </div>
   );

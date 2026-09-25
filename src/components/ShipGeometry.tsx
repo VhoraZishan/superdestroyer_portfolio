@@ -64,12 +64,187 @@ function BulkheadDoorCap({
   );
 }
 
+// ─── Procedural Super Earth Orbital Horizon for Bridge Viewport ───────────────
+function createBridgeEarthTexture(): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d')!;
+
+  const oceanGrad = ctx.createLinearGradient(0, 0, 0, 512);
+  oceanGrad.addColorStop(0, '#0a2342');
+  oceanGrad.addColorStop(0.5, '#16538e');
+  oceanGrad.addColorStop(1, '#0a2342');
+  ctx.fillStyle = oceanGrad;
+  ctx.fillRect(0, 0, 1024, 512);
+
+  const drawContinent = (cx: number, cy: number, r: number, points: number) => {
+    ctx.beginPath();
+    for (let i = 0; i <= points; i++) {
+      const angle = (i / points) * Math.PI * 2;
+      const dist = r * (0.6 + 0.4 * Math.sin(angle * 4.2) * Math.cos(angle * 2.7));
+      const px = cx + Math.cos(angle) * dist;
+      const py = cy + Math.sin(angle) * dist * 0.7;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  };
+
+  const landmasses = [
+    { x: 175, y: 210, r: 120, col: '#237344' },
+    { x: 250, y: 325, r: 90,  col: '#2e864f' },
+    { x: 475, y: 175, r: 130, col: '#2a6f47' },
+    { x: 525, y: 290, r: 105, col: '#6b7c4b' },
+    { x: 725, y: 220, r: 150, col: '#2f7e4e' },
+    { x: 825, y: 350, r: 75,  col: '#6b6343' },
+    { x: 90,  y: 150, r: 80,  col: '#2e7c4c' },
+  ];
+
+  for (const land of landmasses) {
+    drawContinent(land.x, land.y, land.r, 36);
+    ctx.fillStyle = land.col;
+    ctx.fill();
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#22d3ee';
+    ctx.stroke();
+  }
+
+  // Polar ice caps
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 0, 1024, 35);
+  ctx.fillRect(0, 477, 1024, 35);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.ClampToEdgeWrapping;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+function SuperEarthVista() {
+  const earthTex = useMemo(() => createBridgeEarthTexture(), []);
+
+  return (
+    <group position={[0, -28, -42]} rotation={[0.2, 0.4, 0.05]}>
+      {/* Planetary Sphere with self-illuminated emissive glow */}
+      <mesh>
+        <sphereGeometry args={[32, 64, 64]} />
+        <meshStandardMaterial
+          map={earthTex}
+          emissiveMap={earthTex}
+          emissive="#103a62"
+          emissiveIntensity={0.8}
+          roughness={0.4}
+          metalness={0.0}
+        />
+      </mesh>
+
+      {/* Atmospheric Glowing Rim */}
+      <mesh>
+        <sphereGeometry args={[32.5, 64, 64]} />
+        <meshBasicMaterial
+          color="#34d399"
+          transparent
+          opacity={0.4}
+          side={THREE.BackSide}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+
+      {/* Second outer atmospheric halo */}
+      <mesh>
+        <sphereGeometry args={[33.2, 64, 64]} />
+        <meshBasicMaterial
+          color="#38bdf8"
+          transparent
+          opacity={0.25}
+          side={THREE.BackSide}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+    </group>
+  );
+}
+
 // ─── Helldivers 2 Inspired Grand Command Bridge ──────────────────────────────
 function GrandBridge({ visibleNodes }: { visibleNodes: NodeId[] }) {
   return (
     <group position={[0, 0, 0]}>
-      {/* ── Outer Bridge Architecture Shell ── */}
-      <Model url={ASSET_URLS.bridgeShell} position={[0, 0, -2.0]} />
+      {/* ── Helldivers 2 Command Deck Floor Structure ── */}
+      {/* Main military deck plate: 12m wide x 9m deep */}
+      <mesh position={[0, 0, -2.5]} receiveShadow>
+        <boxGeometry args={[12, 0.2, 9]} />
+        <meshStandardMaterial color="#1e293b" roughness={0.4} metalness={0.7} />
+      </mesh>
+
+      {/* Raised side walkways (left & right) */}
+      <mesh position={[-4.8, 0.2, -2.5]}>
+        <boxGeometry args={[2.4, 0.2, 9]} />
+        <meshStandardMaterial color="#2d3748" roughness={0.35} metalness={0.7} />
+      </mesh>
+      <mesh position={[4.8, 0.2, -2.5]}>
+        <boxGeometry args={[2.4, 0.2, 9]} />
+        <meshStandardMaterial color="#2d3748" roughness={0.35} metalness={0.7} />
+      </mesh>
+
+      {/* Recessed cyan neon floor lighting strips */}
+      <mesh position={[-3.5, 0.12, -2.5]}>
+        <boxGeometry args={[0.08, 0.05, 8.8]} />
+        <meshBasicMaterial color="#00e5ff" />
+      </mesh>
+      <mesh position={[3.5, 0.12, -2.5]}>
+        <boxGeometry args={[0.08, 0.05, 8.8]} />
+        <meshBasicMaterial color="#00e5ff" />
+      </mesh>
+
+      {/* Observation deck yellow hazard stripe near window */}
+      <mesh position={[0, 0.12, -5.7]}>
+        <boxGeometry args={[11.6, 0.02, 0.14]} />
+        <meshBasicMaterial color="#facc15" />
+      </mesh>
+
+      {/* ── Industrial Ceiling & Overhead Floodlights ── */}
+      <mesh position={[0, 3.7, -2.5]}>
+        <boxGeometry args={[12, 0.2, 9]} />
+        <meshStandardMaterial color="#0f172a" roughness={0.6} metalness={0.5} />
+      </mesh>
+      <mesh position={[0, 3.58, -2.5]}>
+        <boxGeometry args={[0.4, 0.06, 7]} />
+        <meshBasicMaterial color="#ffffff" />
+      </mesh>
+      <mesh position={[-3.5, 3.58, -2.5]}>
+        <boxGeometry args={[0.25, 0.06, 7]} />
+        <meshBasicMaterial color="#e0f2fe" />
+      </mesh>
+      <mesh position={[3.5, 3.58, -2.5]}>
+        <boxGeometry args={[0.25, 0.06, 7]} />
+        <meshBasicMaterial color="#e0f2fe" />
+      </mesh>
+
+      {/* ── Side Walls (Left & Right) ── */}
+      <mesh position={[-6.0, 1.85, -2.5]}>
+        <boxGeometry args={[0.2, 3.5, 9]} />
+        <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.65} />
+      </mesh>
+      <mesh position={[6.0, 1.85, -2.5]}>
+        <boxGeometry args={[0.2, 3.5, 9]} />
+        <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.65} />
+      </mesh>
+
+      {/* ── Rear Bulkhead Wall (leads to Armory corridor at +Z) ── */}
+      <mesh position={[-3.9, 1.85, 2.0]}>
+        <boxGeometry args={[4.2, 3.5, 0.2]} />
+        <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.65} />
+      </mesh>
+      <mesh position={[3.9, 1.85, 2.0]}>
+        <boxGeometry args={[4.2, 3.5, 0.2]} />
+        <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.65} />
+      </mesh>
+      <mesh position={[0, 3.1, 2.0]}>
+        <boxGeometry args={[3.6, 1.0, 0.2]} />
+        <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.65} />
+      </mesh>
 
       {/* Sealed Blast Door at rear doorway (z=2.0) if Armory Bay is not loaded */}
       {!visibleNodes.includes('corridor-1') && (
@@ -122,10 +297,10 @@ function GrandBridge({ visibleNodes }: { visibleNodes: NodeId[] }) {
       <WallConsole position={[5.8, 1.2, 0]} rotation={[0, -Math.PI / 2, 0]} />
 
       {/* ── Floor-To-Ceiling Panoramic Observation Window (at z = -6.8) ── */}
-      {/* Window Mullions / Frame Pillars */}
-      {[-5.8, -3.5, -1.2, 1.2, 3.5, 5.8].map((x, idx) => (
+      {/* 3 Window Sections: Left edge (-5.8), 2 dividers (-1.95, 1.95), Right edge (5.8) */}
+      {[-5.8, -1.95, 1.95, 5.8].map((x, idx) => (
         <mesh key={idx} position={[x, 1.85, -6.8]}>
-          <boxGeometry args={[0.2, 3.5, 0.25]} />
+          <boxGeometry args={[0.22, 3.5, 0.25]} />
           <meshStandardMaterial color="#1e293b" roughness={0.3} metalness={0.9} />
         </mesh>
       ))}
@@ -140,18 +315,16 @@ function GrandBridge({ visibleNodes }: { visibleNodes: NodeId[] }) {
         <meshStandardMaterial color="#1e293b" roughness={0.3} metalness={0.9} />
       </mesh>
 
-      {/* Clear Transparent Reinforced Glass Panes */}
+      {/* Crystal Clear Transparent Reinforced Viewport Glass Panes */}
       <mesh position={[0, 1.85, -6.8]}>
         <planeGeometry args={[11.6, 3.4]} />
-        <meshPhysicalMaterial
-          color="#0e2a47"
+        <meshStandardMaterial
+          color="#7dd3fc"
           transparent
-          opacity={0.12}
-          roughness={0.02}
-          metalness={0.98}
-          clearcoat={1.0}
-          clearcoatRoughness={0.05}
-          reflectivity={0.95}
+          opacity={0.10}
+          roughness={0.05}
+          metalness={0.1}
+          depthWrite={false}
         />
       </mesh>
 
@@ -162,37 +335,22 @@ function GrandBridge({ visibleNodes }: { visibleNodes: NodeId[] }) {
       <Model url={ASSET_URLS.railing2m} position={[3.0, 0.1, -5.8]} />
 
       {/* ── Orbital Space Vista Outside Viewport Windows ── */}
-      <group position={[0, 0, -45]}>
-        {/* Massive Super Earth glowing horizon cutting across the lower half of the viewport */}
-        <mesh position={[0, -56, 0]}>
-          <sphereGeometry args={[58, 64, 64]} />
-          <meshStandardMaterial
-            color="#144272"
-            roughness={0.45}
-            metalness={0.1}
-          />
-        </mesh>
-        {/* Glowing atmospheric turquoise/cyan rim along the planet curve */}
-        <mesh position={[0, -56, 0]}>
-          <sphereGeometry args={[58.9, 64, 64]} />
-          <meshBasicMaterial
-            color="#34d399"
-            transparent
-            opacity={0.35}
-            side={THREE.BackSide}
-            blending={THREE.AdditiveBlending}
-          />
-        </mesh>
+      {/* Super Earth planetary sphere curving across lower viewport */}
+      <SuperEarthVista />
 
-        {/* Distant vanity fleet ships in orbital formation outside */}
-        <group position={[-18, 8, 12]} scale={0.35} rotation={[0.2, 0.5, -0.1]}>
+      {/* Distant vanity fleet ships in orbital formation outside the 3 window sections */}
+      <group position={[0, 0, 0]}>
+        {/* Left Section Escort — Spitfire */}
+        <group position={[-12.5, 4.0, -28]} scale={0.42} rotation={[0.2, 0.55, -0.08]}>
           <Model url="/assets/Spitfire.gltf" position={[0, 0, 0]} />
         </group>
-        <group position={[20, 4, 16]} scale={0.32} rotation={[0.15, -0.4, 0.05]}>
-          <Model url="/assets/Striker.gltf" position={[0, 0, 0]} />
-        </group>
-        <group position={[0, 16, -10]} scale={0.4} rotation={[0.2, 0.3, 0]}>
+        {/* Center Section Escort — Zenith High-Orbit Cruiser */}
+        <group position={[1.5, 8.5, -34]} scale={0.44} rotation={[0.18, 0.35, -0.05]}>
           <Model url="/assets/Zenith.gltf" position={[0, 0, 0]} />
+        </group>
+        {/* Right Section Escort — Striker Flanker */}
+        <group position={[12.5, 3.5, -25]} scale={0.38} rotation={[0.15, -0.45, 0.08]}>
+          <Model url="/assets/Striker.gltf" position={[0, 0, 0]} />
         </group>
       </group>
     </group>
@@ -572,6 +730,10 @@ export function ShipGeometry() {
       <pointLight position={[0, 1.4, -1.8]} intensity={50} color="#00e5ff" decay={2} />
       {/* Viewport bright orbital sunlight pouring into the bridge */}
       <directionalLight position={[0, 4, -18]} intensity={3.5} color="#38bdf8" />
+      {/* Exterior celestial sunlight illuminating the planet and fleet cruisers */}
+      <directionalLight position={[-25, 22, -45]} intensity={4.5} color="#fffdf0" />
+      {/* Exterior planetary atmospheric emerald bounce */}
+      <directionalLight position={[10, -10, -35]} intensity={2.8} color="#34d399" />
       {/* Armory run: orange-red work glow */}
       <pointLight position={[0, 2.0, 4.5]} intensity={45} color="#ff7722" decay={2} />
       {/* Junction center light */}
